@@ -1,1 +1,1 @@
-# drosera--setup-script
+# drosera-setup-script
