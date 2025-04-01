@@ -56,16 +56,15 @@ else
     echo "Python is already installed. Skipping installation."
 fi
 
-# Install Node.js if not already installed or is below version 14
-node_version=$(node -v | sed 's/v//')
-if ! command_exists node || [ "$node_version" \< "14" ]; then
-    echo "Installing/updating Node.js to version 14+..."
-    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-    node -v
-else
-    echo "Node.js is already installed and compatible. Skipping installation."
-fi
+# Remove any older version of Node.js and install Node.js version 14+
+echo "Removing old Node.js versions..."
+sudo apt-get remove -y nodejs
+
+# Install Node.js 14.x or higher from NodeSource
+echo "Installing/updating Node.js to version 14+..."
+curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
+node -v  # Check if the correct version is installed
 
 # Install Yarn if not already installed
 if ! command_exists yarn; then
