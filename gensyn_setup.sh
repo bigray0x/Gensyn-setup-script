@@ -19,23 +19,32 @@ else
     echo "Yarn is already installed."
 fi
 
-# Clone the RL Swarm repository
-echo "Cloning RL Swarm repository..."
-rm -rf rl-swarm
-if git clone https://github.com/bigray0x/rl-swarm.git; then
-    cd rl-swarm || { echo "Failed to enter rl-swarm directory! Exiting."; exit 1; }
+# Clone the gensyn-setup-script repository
+echo "Cloning gensyn-setup-script repository..."
+rm -rf gensyn-setup-script
+if git clone https://github.com/bigray0x/gensyn-setup-script.git; then
+    cd gensyn-setup-script || { echo "Failed to enter gensyn-setup-script directory! Exiting."; exit 1; }
 else
     echo "Failed to clone repository! Exiting."
     exit 1
 fi
 
+# Make gensyn_setup.sh executable and run it
+chmod +x gensyn_setup.sh
+echo "Running gensyn_setup.sh..."
+./gensyn_setup.sh
+
+# Change to rl-swarm directory after gensyn_setup.sh execution
+cd ../rl-swarm || { echo "Failed to enter rl-swarm directory! Exiting."; exit 1; }
+
 # Create a new screen session and run RL Swarm
 echo "Starting RL Swarm in a screen session..."
-screen -dmS gensyn bash -c '
+screen -dmS gensyn bash -c "
+    cd '$(pwd)' &&
     python3 -m venv .venv &&
     source .venv/bin/activate &&
     ./run_rl_swarm.sh
-'
+"
 
 echo "RL Swarm is now running in a detached screen session named 'gensyn'."
 echo "Use 'screen -r gensyn' to attach to it."
