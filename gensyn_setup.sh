@@ -29,10 +29,15 @@ else
     exit 1
 fi
 
-# Make gensyn_setup.sh executable and run it
-chmod +x gensyn_setup.sh
+# Run gensyn_setup.sh with a timeout (prevent infinite loops)
 echo "Running gensyn_setup.sh..."
-./gensyn_setup.sh
+timeout 600 ./gensyn_setup.sh  # ⏳ Stops execution if it runs longer than 10 minutes
+
+# Check if gensyn_setup.sh completed successfully
+if [ $? -ne 0 ]; then
+    echo "gensyn_setup.sh did not complete successfully. Exiting."
+    exit 1
+fi
 
 # Change to rl-swarm directory after gensyn_setup.sh execution
 cd ../rl-swarm || { echo "Failed to enter rl-swarm directory! Exiting."; exit 1; }
@@ -59,22 +64,4 @@ sleep 5
 
 echo "===================================="
 echo "   RL Swarm setup complete!   "
-echo "   Follow the instructions below:  "
-echo "===================================="
-echo "1. Wait for 'Waiting for userData.json to be created...' in the logs."
-echo "2. Open the login page:"
-echo "   - If on a local PC: http://localhost:3000/"
-echo "   - If on a VPS: http://<YOUR_SERVER_IP>:3000/"
-echo "3. If you can't access the login page remotely, forward the port:"
-echo "   - Open PowerShell on your local PC"
-echo "   - Run: ssh -L 3000:localhost:3000 root@<YOUR_SERVER_IP> -p <SSH_PORT>"
-echo "   - Then open http://localhost:3000/ in your browser"
-echo "4. After logging in, the node will complete setup."
-echo "5. Find your node name by searching for 'Hello' in the terminal."
-echo "6. Save the swarm.pem file in: /root/rl-swarm/"
-echo "===================================="
-echo "Screen Commands:"
-echo " - Detach: CTRL + A + D"
-echo " - Reattach: screen -r gensyn"
-echo " - Stop: screen -XS gensyn quit"
 echo "===================================="
