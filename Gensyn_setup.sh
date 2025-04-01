@@ -29,7 +29,7 @@ fi
 # Clone RL Swarm repository
 if [ ! -d "rl-swarm" ]; then
     echo "🐝 Cloning RL Swarm repository..."
-    git clone https://github.com/RL-Swarm/rl-swarm.git
+    git clone https://github.com/gensyn-ai/rl-swarm.git
 else
     echo "✅ RL Swarm repository already exists."
 fi
