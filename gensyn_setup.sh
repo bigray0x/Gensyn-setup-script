@@ -16,7 +16,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 echo "Installing essential utilities..."
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano \
     automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev \
-    tar clang bsdmainutils ncdu unzip 
+    tar clang bsdmainutils ncdu unzip
 
 # Install Docker if not already installed
 if ! command_exists docker; then
@@ -56,14 +56,15 @@ else
     echo "Python is already installed. Skipping installation."
 fi
 
-# Install Node.js if not already installed
-if ! command_exists node; then
-    echo "Installing Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+# Install Node.js if not already installed or is below version 14
+node_version=$(node -v | sed 's/v//')
+if ! command_exists node || [ "$node_version" \< "14" ]; then
+    echo "Installing/updating Node.js to version 14+..."
+    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
     sudo apt-get install -y nodejs
     node -v
 else
-    echo "Node.js is already installed. Skipping installation."
+    echo "Node.js is already installed and compatible. Skipping installation."
 fi
 
 # Install Yarn if not already installed
@@ -95,6 +96,11 @@ fi
 
 # Change to RL Swarm directory
 cd $HOME/rl-swarm
+
+# Ensure port 3000 is open
+echo "Opening port 3000..."
+sudo ufw allow 3000/tcp
+sudo ufw reload
 
 # Start RL Swarm in a screen session
 if ! screen -list | grep -q "swarm"; then
